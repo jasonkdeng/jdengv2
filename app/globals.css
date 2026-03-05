@@ -1,26 +1,164 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #111315;
+  --foreground: #e6ebe8;
+  --accent: #5c7f67;
+  --muted: #8a9094;
+  --grid: rgba(255, 255, 255, 0.05);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-accent: var(--accent);
+  --color-muted: var(--muted);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html,
+body {
+  min-height: 100%;
+}
+
+html {
+  scrollbar-gutter: stable;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), sans-serif;
+  line-height: 1.6;
+}
+
+a {
+  transition: color 160ms ease;
+}
+
+a:hover {
+  color: var(--accent);
+}
+
+.inline-link {
+  display: inline-flex;
+  align-items: center;
+  color: var(--foreground);
+  text-decoration: none;
+  transition: color 1600ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.inline-link-label {
+  position: relative;
+  display: inline-block;
+  letter-spacing: 0.01em;
+  padding-bottom: 0.2em;
+}
+
+.inline-link-label::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 100%;
+  bottom: 0;
+  height: 1px;
+  background: rgba(230, 235, 232, 0.24);
+}
+
+.inline-link-label::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 100%;
+  bottom: 0;
+  height: 1px;
+  background: var(--accent);
+  transform: translateZ(0) scaleX(0);
+  transform-origin: left center;
+  backface-visibility: hidden;
+  will-change: transform;
+  transition: transform 1600ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.inline-link:hover,
+.inline-link:focus-visible {
+  color: var(--accent);
+}
+
+.inline-link:hover .inline-link-label::after,
+.inline-link:focus-visible .inline-link-label::after {
+  transform: translateZ(0) scaleX(1);
+}
+
+.top-nav-tabs {
+  padding-top: 0.35rem;
+}
+
+.top-nav-tabs-list {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 1rem;
+  row-gap: 0.35rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.top-nav-tab {
+  position: relative;
+  display: inline-block;
+  color: var(--muted);
+  text-decoration: none;
+  letter-spacing: 0.01em;
+  padding-bottom: 0.2em;
+  font-size: 0.72rem;
+}
+
+.top-nav-tab::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 100%;
+  bottom: 0;
+  height: 1px;
+  background: rgba(138, 144, 148, 0.7);
+}
+
+.top-nav-tab::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 100%;
+  bottom: 0;
+  height: 1px;
+  background: var(--foreground);
+  transform: translateZ(0) scaleX(0);
+  transform-origin: left center;
+  backface-visibility: hidden;
+  will-change: transform;
+  transition: transform 800ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.top-nav-tab:hover,
+.top-nav-tab:focus-visible {
+  color: var(--muted);
+}
+
+.top-nav-tab:hover::after,
+.top-nav-tab:focus-visible::after {
+  transform: translateZ(0) scaleX(1);
+}
+
+.top-nav-tab.is-active {
+  color: var(--foreground);
+}
+
+.top-nav-tab.is-active::after {
+  transform: translateZ(0) scaleX(1);
+}
+
+.top-nav-tab.is-active:hover,
+.top-nav-tab.is-active:focus-visible {
+  color: var(--foreground);
 }
