@@ -6,8 +6,7 @@ import { usePathname } from "next/navigation";
 const tabs = [
   { label: "Me", href: "/" },
   { label: "Projects", href: "/projects" },
-  { label: "Blog", href: "/blogs" },
-  { label: "Passions", href: "/passions" },
+  { label: "Blog", href: "/blog" },
 ] as const;
 
 type TopNavTabProps = {

@@ -9,8 +9,11 @@ const LINE_THICKNESS = 1;
 
 const DISTORTION_STRENGTH = 14;
 const DISTORTION_RADIUS = 38000;
+const DISTORTION_CUTOFF_RADIUS = 320;
 const CURSOR_EASING = 0.14;
 const FORCE_EASING = 0.08;
+const MOTION_EPSILON = 0.1;
+const FORCE_EPSILON = 0.002;
 
 type Point = {
   x: number;
@@ -43,6 +46,48 @@ export function InteractiveGridBackground() {
   const pointer = useRef<Point>({ x: -9999, y: -9999 });
   const pointerForceTarget = useRef(0);
   const pointerForce = useRef(0);
+  const startAnimationRef = useRef<() => void>(() => {});
+
+  const toPath = (points: Point[]) => {
+    if (points.length === 0) return "";
+    let d = `M ${points[0].x} ${points[0].y}`;
+
+    for (let index = 1; index < points.length; index += 1) {
+      d += ` L ${points[index].x} ${points[index].y}`;
+    }
+
+    return d;
+  };
+
+  const horizontalStaticPaths = useMemo(() => {
+    if (viewport.width === 0) return [];
+
+    return horizontalLines.map((lineIndex) => {
+      const y = lineIndex * GRID_SPACING;
+      const points: Point[] = [];
+
+      for (let x = 0; x <= viewport.width + GRID_SPACING; x += GRID_SPACING) {
+        points.push({ x, y });
+      }
+
+      return toPath(points);
+    });
+  }, [horizontalLines, viewport.width]);
+
+  const verticalStaticPaths = useMemo(() => {
+    if (viewport.height === 0) return [];
+
+    return verticalLines.map((lineIndex) => {
+      const x = lineIndex * GRID_SPACING;
+      const points: Point[] = [];
+
+      for (let y = 0; y <= viewport.height + GRID_SPACING; y += GRID_SPACING) {
+        points.push({ x, y });
+      }
+
+      return toPath(points);
+    });
+  }, [verticalLines, viewport.height]);
 
   useEffect(() => {
     const syncViewport = () => {
@@ -62,10 +107,12 @@ export function InteractiveGridBackground() {
       targetPointer.current.x = event.clientX;
       targetPointer.current.y = event.clientY;
       pointerForceTarget.current = 1;
+      startAnimationRef.current();
     };
 
     const handleMouseLeave = () => {
       pointerForceTarget.current = 0;
+      startAnimationRef.current();
     };
 
     window.addEventListener("mousemove", handleMouseMove);
@@ -81,22 +128,20 @@ export function InteractiveGridBackground() {
     if (viewport.width === 0 || viewport.height === 0) return;
 
     let rafId = 0;
-
-    const toPath = (points: Point[]) => {
-      if (points.length === 0) return "";
-      let d = `M ${points[0].x} ${points[0].y}`;
-
-      for (let index = 1; index < points.length; index += 1) {
-        d += ` L ${points[index].x} ${points[index].y}`;
-      }
-
-      return d;
-    };
+    let isAnimating = false;
+    const activeHorizontal = new Set<number>();
+    const activeVertical = new Set<number>();
+    const cutoffSquared = DISTORTION_CUTOFF_RADIUS * DISTORTION_CUTOFF_RADIUS;
 
     const distortPoint = (x: number, y: number): Point => {
       const dx = x - pointer.current.x;
       const dy = y - pointer.current.y;
       const distanceSquared = dx * dx + dy * dy;
+
+      if (distanceSquared > cutoffSquared || pointerForce.current < FORCE_EPSILON) {
+        return { x, y };
+      }
+
       const distance = Math.sqrt(distanceSquared) || 1;
 
       const displacement =
@@ -110,6 +155,25 @@ export function InteractiveGridBackground() {
       };
     };
 
+    const resetInactiveLines = (
+      previousActive: Set<number>,
+      nextActive: Set<number>,
+      refs: (SVGPathElement | null)[],
+      staticPaths: string[],
+    ) => {
+      for (const lineIndex of previousActive) {
+        if (nextActive.has(lineIndex)) continue;
+        const path = refs[lineIndex];
+        if (!path) continue;
+        path.setAttribute("d", staticPaths[lineIndex] ?? "");
+      }
+
+      previousActive.clear();
+      for (const lineIndex of nextActive) {
+        previousActive.add(lineIndex);
+      }
+    };
+
     const animate = () => {
       pointer.current.x +=
         (targetPointer.current.x - pointer.current.x) * CURSOR_EASING;
@@ -118,51 +182,117 @@ export function InteractiveGridBackground() {
       pointerForce.current +=
         (pointerForceTarget.current - pointerForce.current) * FORCE_EASING;
 
-      for (const yIndex of horizontalLines) {
-        const path = horizontalPathRefs.current[yIndex];
-        if (!path) continue;
+      const nextHorizontalActive = new Set<number>();
+      const nextVerticalActive = new Set<number>();
 
-        const y = yIndex * GRID_SPACING;
-        const points: Point[] = [];
+      if (pointerForce.current >= FORCE_EPSILON) {
+        const minHorizontal = Math.max(
+          0,
+          Math.floor((pointer.current.y - DISTORTION_CUTOFF_RADIUS) / GRID_SPACING),
+        );
+        const maxHorizontal = Math.min(
+          horizontalLines.length - 1,
+          Math.ceil((pointer.current.y + DISTORTION_CUTOFF_RADIUS) / GRID_SPACING),
+        );
 
-        for (
-          let x = 0;
-          x <= viewport.width + GRID_SPACING;
-          x += GRID_SPACING
-        ) {
-          points.push(distortPoint(x, y));
+        for (let yIndex = minHorizontal; yIndex <= maxHorizontal; yIndex += 1) {
+          const path = horizontalPathRefs.current[yIndex];
+          if (!path) continue;
+
+          const y = yIndex * GRID_SPACING;
+          const points: Point[] = [];
+
+          for (
+            let x = 0;
+            x <= viewport.width + GRID_SPACING;
+            x += GRID_SPACING
+          ) {
+            points.push(distortPoint(x, y));
+          }
+
+          path.setAttribute("d", toPath(points));
+          nextHorizontalActive.add(yIndex);
         }
 
-        path.setAttribute("d", toPath(points));
+        const minVertical = Math.max(
+          0,
+          Math.floor((pointer.current.x - DISTORTION_CUTOFF_RADIUS) / GRID_SPACING),
+        );
+        const maxVertical = Math.min(
+          verticalLines.length - 1,
+          Math.ceil((pointer.current.x + DISTORTION_CUTOFF_RADIUS) / GRID_SPACING),
+        );
+
+        for (let xIndex = minVertical; xIndex <= maxVertical; xIndex += 1) {
+          const path = verticalPathRefs.current[xIndex];
+          if (!path) continue;
+
+          const x = xIndex * GRID_SPACING;
+          const points: Point[] = [];
+
+          for (
+            let y = 0;
+            y <= viewport.height + GRID_SPACING;
+            y += GRID_SPACING
+          ) {
+            points.push(distortPoint(x, y));
+          }
+
+          path.setAttribute("d", toPath(points));
+          nextVerticalActive.add(xIndex);
+        }
       }
 
-      for (const xIndex of verticalLines) {
-        const path = verticalPathRefs.current[xIndex];
-        if (!path) continue;
+      resetInactiveLines(
+        activeHorizontal,
+        nextHorizontalActive,
+        horizontalPathRefs.current,
+        horizontalStaticPaths,
+      );
+      resetInactiveLines(
+        activeVertical,
+        nextVerticalActive,
+        verticalPathRefs.current,
+        verticalStaticPaths,
+      );
 
-        const x = xIndex * GRID_SPACING;
-        const points: Point[] = [];
+      const pointerXDelta = Math.abs(targetPointer.current.x - pointer.current.x);
+      const pointerYDelta = Math.abs(targetPointer.current.y - pointer.current.y);
+      const forceDelta = Math.abs(pointerForceTarget.current - pointerForce.current);
+      const shouldContinue =
+        pointerXDelta > MOTION_EPSILON ||
+        pointerYDelta > MOTION_EPSILON ||
+        forceDelta > FORCE_EPSILON ||
+        pointerForce.current > FORCE_EPSILON;
 
-        for (
-          let y = 0;
-          y <= viewport.height + GRID_SPACING;
-          y += GRID_SPACING
-        ) {
-          points.push(distortPoint(x, y));
-        }
-
-        path.setAttribute("d", toPath(points));
+      if (!shouldContinue) {
+        isAnimating = false;
+        return;
       }
 
       rafId = window.requestAnimationFrame(animate);
     };
 
-    rafId = window.requestAnimationFrame(animate);
+    const startAnimation = () => {
+      if (isAnimating) return;
+      isAnimating = true;
+      rafId = window.requestAnimationFrame(animate);
+    };
+
+    startAnimationRef.current = startAnimation;
 
     return () => {
+      startAnimationRef.current = () => {};
       window.cancelAnimationFrame(rafId);
     };
-  }, [horizontalLines, verticalLines, viewport.height, viewport.width]);
+  }, [
+    horizontalLines,
+    horizontalStaticPaths,
+    verticalLines,
+    verticalStaticPaths,
+    viewport.height,
+    viewport.width,
+  ]);
 
   return (
     <svg
@@ -181,6 +311,7 @@ export function InteractiveGridBackground() {
           ref={(element) => {
             horizontalPathRefs.current[lineIndex] = element;
           }}
+          d={horizontalStaticPaths[lineIndex]}
           stroke={LINE_COLOR}
           strokeOpacity={LINE_OPACITY}
           strokeWidth={LINE_THICKNESS}
@@ -194,6 +325,7 @@ export function InteractiveGridBackground() {
           ref={(element) => {
             verticalPathRefs.current[lineIndex] = element;
           }}
+          d={verticalStaticPaths[lineIndex]}
           stroke={LINE_COLOR}
           strokeOpacity={LINE_OPACITY}
           strokeWidth={LINE_THICKNESS}
