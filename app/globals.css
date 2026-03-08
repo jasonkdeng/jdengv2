@@ -248,7 +248,7 @@ a:hover {
 }
 
 .blog-back-link::before {
-  content: "\\2190";
+  content: "←";
   margin-right: 0.38rem;
   color: color-mix(in srgb, var(--accent) 75%, var(--muted));
 }
