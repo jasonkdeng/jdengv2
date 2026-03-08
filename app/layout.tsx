@@ -16,8 +16,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Jason Deng | Portfolio",
-  description: "Minimal personal portfolio of Jason Deng",
+  title: "Jason Deng",
+  description: "Personal Portfolio of Jason Deng",
 };
 
 export default function RootLayout({
