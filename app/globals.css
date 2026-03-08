@@ -396,7 +396,7 @@ a:hover {
   left: calc(100% + 0.9rem);
   top: 50%;
   font-family: var(--font-inter), sans-serif;
-  font-size: 12px;
+  font-size: 10px;
   line-height: 1.1;
   white-space: nowrap;
   color: #777;

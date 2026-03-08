@@ -60,6 +60,12 @@ export default function Home() {
         <ul className="space-y-1 text-xs">
           <InlineLinkItem
             prefix="Engineering @"
+            name="Crozier"
+            logoSrc="/Crozier2.png"
+            url="https://www.cfcrozier.ca/"
+          />
+          <InlineLinkItem
+            prefix="Engineering @"
             name="Checklick"
             logoSrc="/Checklick.png"
             url="https://www.linkedin.com/company/checklick/"
