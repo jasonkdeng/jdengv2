@@ -1,0 +1,98 @@
+export const metadata = {
+  slug: "first-blog-post",
+  title: "Revamping my Portfolio",
+  postedOn: "2026-03-07",
+  theme: "Life",
+  summary: "A quick rebuild of my portfolio as an in-between step before my LittleBigPlanet-inspired redesign.",
+};
+
+# Why I Rebuilt It
+
+My old portfolio worked, but I did not really like it.
+
+It felt like a template I filled out instead of a site I actually made. The info was there, but the personality was not. I kept delaying sharing it, which was probably the biggest sign I needed to rebuild it.
+
+So this rebuild started from a simple question: if someone visited for thirty seconds, what should they immediately understand about me?
+
+I wanted the answer to be clear:
+
+1. I build things.
+2. I care about engineering and design quality.
+3. I am still evolving, and this site should evolve with me.
+
+Also, this is intentionally an in-between version. My next design direction is going to be based on LittleBigPlanet, and this update is me cleaning up the foundation before I go all-in on that style.
+
+## Design Goals
+
+I set a few rules before touching code.
+
+### 1. Keep the writing primary
+
+Projects and experience matter, but I wanted this to read like a person, not a PDF resume copy/pasted into a website. So I tightened the writing, reduced visual clutter, and made section hierarchy clearer.
+
+### 2. Build a system, not a one-off page
+
+I did not want to restyle everything every time I add one new thing. Shared components for the header, footer, sections, and blog listing give me a reusable base.
+
+### 3. Prioritize performance where it matters
+
+I am using higher-res project images, so load behavior needed to be deliberate. I focused on lazy loading, async decoding, and placeholders so heavy images feel smoother.
+
+## What Changed
+
+This pass touched both structure and content.
+
+### Site-wide structure
+
+- Shared footer component now appears across all pages.
+- Navigation is cleaner, and I removed unfinished sections from primary tabs.
+- Spacing is more deliberate, especially around section transitions.
+
+### Projects page
+
+- Added progressive image loading behavior for heavier assets.
+- Tuned image quality and loading priority by viewport context.
+- Added a direct GitHub callout so people can browse all projects quickly.
+
+### Blog infrastructure
+
+- Added MDX-driven post metadata and listing.
+- Ensured newest posts are sorted first.
+- Wired static slug generation so posts are routable by default.
+
+The main win is not one specific component. It is that the site feels more coherent now.
+
+## What I Learned
+
+### Clarity beats novelty
+
+I spent less time forcing "unique" visuals and more time fixing readability, spacing, and flow. That made everything better immediately.
+
+### Systems reduce friction
+
+When components are clean, small edits stay small. That makes shipping way easier.
+
+### Done is better than perfect
+
+If I waited for perfect, this would still be unpublished. Shipping a strong draft is how momentum starts.
+
+## What Comes Next
+
+This is v1, and it is somewhat transitional
+
+The next full redesign will lean into a Little Big Planet inspired visual style. This version exists so I can keep posting, keep iterating, and have clean infrastructure before I make that bigger creative jump.
+
+Planned improvements:
+
+1. Add deeper project case studies with context, tradeoffs, and outcomes.
+2. Expand the blog with technical breakdowns and build logs.
+3. Introduce richer media optimization by converting heavy PNG assets to modern formats.
+4. Re-introduce the Passions page once there is enough content to make it meaningful.
+
+## Closing
+
+I rebuilt this portfolio so it actually sounds and feels like me.
+
+It is still evolving, but now it has a stronger base: clearer voice, reusable structure, and room to experiment.
+
+My approach here was simple: get the fundamentals right, ship it, then build toward the bigger vision.
