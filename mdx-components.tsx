@@ -71,6 +71,33 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
         {children}
       </h2>
     ),
+    a: ({
+      children,
+      className,
+      href,
+      rel,
+      target,
+      ...props
+    }: ComponentPropsWithoutRef<"a">) => {
+      const normalizedTarget = target ?? "_blank";
+
+      const normalizedRel =
+        normalizedTarget === "_blank"
+          ? [rel, "noopener noreferrer"].filter(Boolean).join(" ")
+          : rel;
+
+      return (
+        <a
+          {...props}
+          href={href}
+          target={normalizedTarget}
+          rel={normalizedRel}
+          className={["group inline-link", className].filter(Boolean).join(" ")}
+        >
+          <span className="inline-link-label">{children}</span>
+        </a>
+      );
+    },
     ...components,
   };
 }

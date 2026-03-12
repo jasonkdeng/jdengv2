@@ -1,5 +1,4 @@
 import type { ComponentType } from "react";
-import FirstBlogPost, { metadata as firstBlogPostMeta } from "@/content/blog/first-blog-post.mdx";
 
 export const BLOG_THEMES = [
   "Robots",
@@ -23,13 +22,31 @@ export type BlogPost = BlogPostMetadata & {
   Content: ComponentType;
 };
 
-// Register new MDX posts here. Listing and static route generation use this source of truth.
-const mdxPosts: BlogPost[] = [
-  {
-    ...(firstBlogPostMeta as BlogPostMetadata),
-    Content: FirstBlogPost,
-  },
-];
+type MDXModule = {
+  default: ComponentType;
+  metadata: BlogPostMetadata;
+};
+
+type WebpackRequireContext = {
+  keys(): string[];
+  <T>(id: string): T;
+};
+
+// webpack require.context – automatically picks up every .mdx file in content/blog/.
+// To add a new post, just drop an .mdx file there with a `metadata` export.
+const mdxContext = (
+  require as unknown as {
+    context(dir: string, useSubdirs: boolean, filter: RegExp): WebpackRequireContext;
+  }
+).context("../content/blog", false, /\.mdx$/);
+
+const mdxPosts: BlogPost[] = mdxContext.keys().map((key) => {
+  const mod = mdxContext<MDXModule>(key);
+  return {
+    ...(mod.metadata as BlogPostMetadata),
+    Content: mod.default,
+  };
+});
 
 function sortByNewest(posts: BlogPost[]) {
   return [...posts].sort(
