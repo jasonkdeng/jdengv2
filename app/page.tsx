@@ -19,13 +19,7 @@ export default function Home() {
       <Section label="Currently">
         <ul className="space-y-1 text-xs">
           <InlineLinkItem
-            prefix="Engineering @"
-            name="UWaterloo"
-            logoSrc="/Waterloo.png"
-            url="https://uwaterloo.ca/mechanical-mechatronics-engineering/"
-          />
-          <InlineLinkItem
-            prefix="Incoming @"
+            prefix="Incoming SDE @"
             name="Marketing Kitchen"
             logoSrc="/MarketingKitchen.png"
             url="https://www.marketingkitchen.ca"
@@ -35,6 +29,12 @@ export default function Home() {
             name="MiON Forest"
             logoSrc="/Mion.png"
             url="https://mionscience.odoo.com/forest"
+          />
+          <InlineLinkItem
+            prefix="Engineering @"
+            name="UWaterloo"
+            logoSrc="/Waterloo.png"
+            url="https://uwaterloo.ca/mechanical-mechatronics-engineering/"
           />
           {currentItems.map((item) => (
             <li key={item}>{item}</li>
