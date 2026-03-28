@@ -4,9 +4,9 @@ import { InlineLinkItem } from "@/components/inline-link-item";
 export default function Home() {
   const currentItems: string[] = [];
 
-  const buildingItems = [
-    "Robots to Annoy My Roommates",
-  ];
+  // const buildingItems = [
+  //   "Robots to Annoy My Roommates",
+  // ];
 
   const nowItems = [
     "Learning @ Watonomous",
@@ -23,6 +23,12 @@ export default function Home() {
             name="UWaterloo"
             logoSrc="/Waterloo.png"
             url="https://uwaterloo.ca/mechanical-mechatronics-engineering/"
+          />
+          <InlineLinkItem
+            prefix="Incoming @"
+            name="Marketing Kitchen"
+            logoSrc="/MarketingKitchen.png"
+            url="https://www.marketingkitchen.ca"
           />
           <InlineLinkItem
             prefix="Research @"
@@ -50,9 +56,9 @@ export default function Home() {
             logoSrc="/Waturbine.png"
             url="https://waturbine.ca/"
           />
-          {buildingItems.map((item) => (
+          {/* {buildingItems.map((item) => (
             <li key={item}>{item}</li>
-          ))}
+          ))} */}
         </ul>
       </Section>
 
