@@ -5,13 +5,13 @@ export default function Home() {
   const currentItems: string[] = [];
 
   // const buildingItems = [
-  //   "Robots to Annoy My Roommates",
+  //   ,
   // ];
 
   const nowItems = [
     "Learning @ Watonomous",
-    "Getting Ready for Intramural Playoffs",
-    "Frolicking in the Spring Breeze",
+    "Getting Ready for Finals",
+    "Freezing in the Spring Breeze",
   ];
 
   return (
@@ -55,6 +55,12 @@ export default function Home() {
             name="Waturbine"
             logoSrc="/Waturbine.png"
             url="https://waturbine.ca/"
+          />
+          <InlineLinkItem
+            prefix="A"
+            name="Quadruped Robot"
+            logoSrc="/quadruped.png"
+            url="/blog/quadruped"
           />
           {/* {buildingItems.map((item) => (
             <li key={item}>{item}</li>
