@@ -5,6 +5,7 @@ type InlineLinkItemProps = {
   name: string;
   logoSrc: string;
   url: string;
+  openInNewTab?: boolean;
 };
 
 export function InlineLinkItem({
@@ -12,14 +13,15 @@ export function InlineLinkItem({
   name,
   logoSrc,
   url,
+  openInNewTab = true,
 }: InlineLinkItemProps) {
   return (
     <li>
       <span>{`${prefix} `}</span>
       <a
         href={url}
-        target="_blank"
-        rel="noopener noreferrer"
+        target={openInNewTab ? "_blank" : undefined}
+        rel={openInNewTab ? "noopener noreferrer" : undefined}
         className="group inline-link gap-x-2"
       >
         <span className="inline-link-label">{name}</span>

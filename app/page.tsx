@@ -61,6 +61,7 @@ export default function Home() {
             name="Quadruped Robot"
             logoSrc="/quadruped.png"
             url="/blog/quadruped"
+            openInNewTab={false}
           />
           {/* {buildingItems.map((item) => (
             <li key={item}>{item}</li>
