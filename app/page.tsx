@@ -10,8 +10,8 @@ export default function Home() {
 
   const nowItems = [
     "Learning @ Watonomous",
-    "Getting Ready for Finals",
-    "Freezing in the Spring Breeze",
+    "Trying to Make it through Finals",
+    "Why was it -2 degrees yesterday and 23 today???",
   ];
 
   return (
