@@ -30,7 +30,7 @@ export function InlineLinkItem({
           alt={`${name} logo`}
           width={18}
           height={18}
-          className="h-[17px] w-auto shrink-0 opacity-80 transition-opacity duration-150 group-hover:opacity-100"
+          className="inline-link-item-logo h-[17px] w-auto shrink-0 opacity-80 transition-opacity duration-150 group-hover:opacity-100"
         />
       </a>
     </li>
