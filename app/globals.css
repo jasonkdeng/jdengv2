@@ -77,7 +77,7 @@ a:hover {
   transform: translateZ(0) scaleX(0);
   transform-origin: left center;
   backface-visibility: hidden;
-  will-change: transform;
+  will-change: auto;
   transition: transform 1600ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -88,7 +88,16 @@ a:hover {
 
 .inline-link:hover .inline-link-label::after,
 .inline-link:focus-visible .inline-link-label::after {
+  will-change: transform;
   transform: translateZ(0) scaleX(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .inline-link,
+  .inline-link-label::after,
+  .inline-link-item-logo {
+    transition: none !important;
+  }
 }
 
 .top-nav-tabs {
