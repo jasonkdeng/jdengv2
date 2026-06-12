@@ -10,8 +10,8 @@ export default function Home() {
 
   const nowItems = [
     "Learning @ Watonomous",
-    "Trying to Make it through Finals",
-    "Why was it -2 degrees yesterday and 23 today???",
+    "Working in Markham!",
+    "Learning how to grow as a person.",
   ];
 
   return (
@@ -19,7 +19,7 @@ export default function Home() {
       <Section label="Currently">
         <ul className="space-y-1 text-xs">
           <InlineLinkItem
-            prefix="Incoming SDE @"
+            prefix="SDE @"
             name="Marketing Kitchen"
             logoSrc="/MarketingKitchen.png"
             url="https://www.marketingkitchen.ca"
