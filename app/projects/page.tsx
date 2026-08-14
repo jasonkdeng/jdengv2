@@ -6,6 +6,7 @@ type ProjectCard = {
   year: string;
   imageSrc: string;
   imageAlt: string;
+  href?: string;
 };
 
 const SHIMMER_SVG = `
@@ -30,6 +31,7 @@ const projects: ProjectCard[] = [
     year: "2026",
     imageSrc: "/EdexMockup.webp",
     imageAlt: "Edex platform preview",
+    href: "https://tryedex.com",
   },
   {
     title: "Waturbine",
@@ -37,6 +39,7 @@ const projects: ProjectCard[] = [
     year: "2025-Present",
     imageSrc: "/WaturbineMockup2.png",
     imageAlt: "Waturbine Website Preview",
+    href: "https://waturbine.ca",
   },
   {
     title: "GrassrootsKW",
@@ -44,6 +47,7 @@ const projects: ProjectCard[] = [
     year: "2025-Present",
     imageSrc: "/GrassrootsMockup.png",
     imageAlt: "Grassroots project preview",
+    href: "https://grassrootskw.org",
   },
   {
     title: "Agely",
@@ -51,6 +55,7 @@ const projects: ProjectCard[] = [
     year: "2025",
     imageSrc: "/Agely1.png",
     imageAlt: "Agely Preview",
+    href: "https://devpost.com/software/agely",
   },
   {
     title: "The Question of Congestion",
@@ -78,31 +83,67 @@ export default function ProjectsPage() {
       </p>
       <ul className="project-grid" role="list">
         {projects.map((project, index) => (
-          <li key={project.title} className="project-card">
-            <div className="project-card-image-wrap">
-              <Image
-                src={project.imageSrc}
-                alt={project.imageAlt}
-                fill
-                className="project-card-image"
-                quality={82}
-                sizes="(max-width: 640px) calc(100vw - 3rem), 656px"
-                placeholder="blur"
-                blurDataURL={shimmerDataUrl}
-                loading={index === 0 ? "eager" : "lazy"}
-                priority={index === 0}
-                fetchPriority={index === 0 ? "high" : "low"}
-                decoding="async"
-              />
-            </div>
+          <li key={project.title}>
+            {project.href ? (
+              <a
+                className="project-card"
+                href={project.href}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <div className="project-card-image-wrap">
+                  <Image
+                    src={project.imageSrc}
+                    alt={project.imageAlt}
+                    fill
+                    className="project-card-image"
+                    quality={82}
+                    sizes="(max-width: 640px) calc(100vw - 3rem), 656px"
+                    placeholder="blur"
+                    blurDataURL={shimmerDataUrl}
+                    loading={index === 0 ? "eager" : "lazy"}
+                    priority={index === 0}
+                    fetchPriority={index === 0 ? "high" : "low"}
+                    decoding="async"
+                  />
+                </div>
 
-            <div className="project-card-content">
-              <div className="project-card-meta-row">
-                <h2 className="project-card-title">{project.title}</h2>
-                <span className="project-card-year">{project.year}</span>
+                <div className="project-card-content">
+                  <div className="project-card-meta-row">
+                    <h2 className="project-card-title">{project.title}</h2>
+                    <span className="project-card-year">{project.year}</span>
+                  </div>
+                  <p className="project-card-description">{project.description}</p>
+                </div>
+              </a>
+            ) : (
+              <div className="project-card">
+                <div className="project-card-image-wrap">
+                  <Image
+                    src={project.imageSrc}
+                    alt={project.imageAlt}
+                    fill
+                    className="project-card-image"
+                    quality={82}
+                    sizes="(max-width: 640px) calc(100vw - 3rem), 656px"
+                    placeholder="blur"
+                    blurDataURL={shimmerDataUrl}
+                    loading={index === 0 ? "eager" : "lazy"}
+                    priority={index === 0}
+                    fetchPriority={index === 0 ? "high" : "low"}
+                    decoding="async"
+                  />
+                </div>
+
+                <div className="project-card-content">
+                  <div className="project-card-meta-row">
+                    <h2 className="project-card-title">{project.title}</h2>
+                    <span className="project-card-year">{project.year}</span>
+                  </div>
+                  <p className="project-card-description">{project.description}</p>
+                </div>
               </div>
-              <p className="project-card-description">{project.description}</p>
-            </div>
+            )}
           </li>
         ))}
       </ul>

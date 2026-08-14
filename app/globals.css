@@ -465,6 +465,8 @@ a:hover {
   overflow: hidden;
   content-visibility: auto;
   contain-intrinsic-size: 360px;
+  color: inherit;
+  text-decoration: none;
 }
 
 .project-card-image-wrap {
