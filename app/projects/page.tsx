@@ -25,6 +25,13 @@ const shimmerDataUrl = `data:image/svg+xml;base64,${Buffer.from(SHIMMER_SVG).toS
 
 const projects: ProjectCard[] = [
   {
+    title: "Edex",
+    description: "A platform for filesystem-native retrieval for agents.",
+    year: "2026",
+    imageSrc: "/EdexMockup.webp",
+    imageAlt: "Edex platform preview",
+  },
+  {
     title: "Waturbine",
     description: "Web Dev lead, Controls and Mechanical Team Member.",
     year: "2025-Present",
