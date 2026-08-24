@@ -33,7 +33,7 @@ Secondly, I've had experience printing on both ELEGOO and Bambu Labs printers, a
 
 I didn't want to go for a P2S because it was a bit out of my budget. I can definitely justify \$500 CAD for a solid 3D printer, but I am not sure about the marginal benefits of the P2S over the P1S for \$300 CAD more. Will update on this later.
 
-# Phase 1: Single Leg Prototype
+## Phase 1: Single Leg Prototype
 I ended up getting a P2S, and spending some time acquainting myself with the printing function and printer debugging. I've learned a lot about improving print quality and creating my own models. I actually have a course that I have to complete for my engineering design credit, which I have been working on in an effort to understand Solidworks to a greater degree. 
 
 To begin my design for the single leg prototype, I focused on freehand sketching the leg first, to give myself a general idea of what needs to be optimized during my design. 
@@ -46,7 +46,7 @@ This shin design eventually evolved through 4 iteractions, as well as a thigh th
 
 ![Full Assembly V1](/fullassy1.webp "Full Assy - Thigh 4.0, Shin 1.4, Hip 2.0")
 
-## Servo Calibration
+### Servo Calibration
 
 Before working on leg kinematics, I calibrated each of the three MG996R servos individually. The leg uses one servo for hip movement, one for the thigh, and one for the knee.
 
@@ -64,7 +64,7 @@ During calibration, I also discovered that one of the MG996R servos was defectiv
 
 One useful takeaway from this process was that calibration is much easier when each servo is tested independently before attempting coordinated movement of the entire leg.
 
-## Defining Joint Directions
+### Defining Joint Directions
 
 Because of how the servos are mounted, the thigh and knee servos rotate in opposite directions relative to the leg's coordinate system.
 
@@ -109,7 +109,7 @@ This gives the leg a theoretical maximum extension of:
 
 Because the links have unequal lengths, there is also a small region close to the hip that the foot cannot reach.
 
-## Single-Leg Inverse Kinematics
+### Single-Leg Inverse Kinematics
 
 With the servos calibrated and the link dimensions measured, I implemented inverse kinematics for the thigh and knee.
 
@@ -172,7 +172,7 @@ This separation is important because higher-level motion code does not need to k
 
 The higher-level controller can work entirely in terms of joint angles and foot positions.
 
-## Current State
+### Current State
 
 The current prototype can:
 
