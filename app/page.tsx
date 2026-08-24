@@ -21,7 +21,7 @@ export default function Home() {
           <InlineLinkItem
             prefix="Incoming Research @"
             name="Vision and Image Processing Group"
-            logoSrc="/viplab.jpg"
+            logoSrc="/viplab.png"
             url="https://vip.uwaterloo.ca/"
           />
           <InlineLinkItem
