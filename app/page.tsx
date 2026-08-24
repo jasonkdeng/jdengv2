@@ -19,10 +19,10 @@ export default function Home() {
       <Section label="Currently">
         <ul className="space-y-1 text-xs">
           <InlineLinkItem
-            prefix="SDE @"
-            name="Marketing Kitchen"
-            logoSrc="/MarketingKitchen.png"
-            url="https://www.marketingkitchen.ca"
+            prefix="Incoming Research @"
+            name="Vision and Image Processing Group"
+            logoSrc="/viplab.jpg"
+            url="https://vip.uwaterloo.ca/"
           />
           <InlineLinkItem
             prefix="Research @"
@@ -71,6 +71,12 @@ export default function Home() {
 
       <Section label="Previously">
         <ul className="space-y-1 text-xs">
+          <InlineLinkItem
+            prefix="SDE @"
+            name="Marketing Kitchen"
+            logoSrc="/MarketingKitchen.png"
+            url="https://www.marketingkitchen.ca"
+          />
           <InlineLinkItem
             prefix="Engineering @"
             name="Crozier"
