@@ -37,3 +37,143 @@ I didn't want to go for a P2S because it was a bit out of my budget. I can defin
 I ended up getting a P2S, and spending some time acquainting myself with the printing function and printer debugging. I've learned a lot about improving print quality and creating my own models. I actually have a course that I have to complete for my engineering design credit, which I have been working on in an effort to understand Solidworks to a greater degree. 
 
 To begin my design for the single leg prototype, I focused on freehand sketching the leg first, to give myself a general idea of what needs to be optimized during my design. 
+
+## Servo Calibration
+
+Before working on leg kinematics, I calibrated each of the three MG996R servos individually. The leg uses one servo for hip movement, one for the thigh, and one for the knee.
+
+I mounted each servo in its final position, commanded it to its nominal center, and then attached the servo horn as close as possible to the desired mechanical reference position. Any remaining error caused by the discrete spline positions could then be handled with a small software offset.
+
+The calibrated neutral positions for the right leg are:
+
+```cpp
+const float HIP_NEUTRAL   = 97.0;
+const float THIGH_NEUTRAL = 86.0;
+const float KNEE_NEUTRAL  = 94.0;
+```
+
+During calibration, I also discovered that one of the MG996R servos was defective. It was behaving inconsistently near the limits of its travel and producing a noticeable clicking sound at the end of movements. Replacing that servo resolved the issue.
+
+One useful takeaway from this process was that calibration is much easier when each servo is tested independently before attempting coordinated movement of the entire leg.
+
+## Defining Joint Directions
+
+Because of how the servos are mounted, the thigh and knee servos rotate in opposite directions relative to the leg's coordinate system.
+
+For the right leg:
+
+* decreasing the thigh servo command moves the thigh forward;
+* increasing the knee servo command moves the shin forward.
+
+Rather than accounting for this throughout the inverse kinematics code, I handle it at the servo-control layer:
+
+```cpp
+const int THIGH_DIRECTION = -1;
+const int KNEE_DIRECTION  = 1;
+```
+
+A desired mathematical joint angle is converted to a physical servo command using:
+
+```cpp
+servoAngle = neutral + direction * jointAngle;
+```
+
+This keeps the kinematics independent of how each servo happens to be installed. The IK can use a consistent coordinate system while the low-level servo code handles offsets and reversed joints.
+
+## Measuring the Leg Geometry
+
+For the kinematics calculations, I measured the link lengths between joint rotation axes rather than using the overall dimensions of the printed parts.
+
+The current leg dimensions are:
+
+```cpp
+const float THIGH_LENGTH = 7.08;  // cm
+const float SHIN_LENGTH  = 11.0;  // cm
+```
+
+`THIGH_LENGTH` is the distance from the thigh rotation axis to the knee rotation axis, while `SHIN_LENGTH` is the distance from the knee rotation axis to the foot contact point.
+
+This gives the leg a theoretical maximum extension of:
+
+```text
+7.08 cm + 11.00 cm = 18.08 cm
+```
+
+Because the links have unequal lengths, there is also a small region close to the hip that the foot cannot reach.
+
+## Single-Leg Inverse Kinematics
+
+With the servos calibrated and the link dimensions measured, I implemented inverse kinematics for the thigh and knee.
+
+For now, I am treating the leg as a planar two-link mechanism and keeping the hip servo fixed at its calibrated neutral position. The desired foot position is described using two coordinates:
+
+```text
++x = forward
++z = downward
+```
+
+For example:
+
+```cpp
+setFootPosition(3.0, 15.0);
+```
+
+requests a foot position 3 cm forward and 15 cm below the thigh joint.
+
+The IK first checks whether the requested point is physically reachable. It then uses the law of cosines to calculate the knee angle and solves for the corresponding thigh angle.
+
+A simplified version of the calculation is:
+
+```cpp
+float distanceSquared = x * x + z * z;
+float distance = sqrt(distanceSquared);
+
+float cosKnee =
+    (L1 * L1 + L2 * L2 - distanceSquared)
+    / (2.0 * L1 * L2);
+
+float internalKnee = acos(cosKnee);
+
+float kneeAngle =
+    180.0 - internalKnee * 180.0 / PI;
+```
+
+The resulting mathematical joint angles are then passed through the calibration layer before being sent to the servos.
+
+At this point, the inverse kinematics appears to be working correctly for the single leg. Moving the target foot position produces the expected combination of thigh and knee movement.
+
+## Current Control Architecture
+
+The control system is beginning to separate into several layers:
+
+```text
+Desired foot position
+        ↓
+Inverse kinematics
+        ↓
+Joint angles
+        ↓
+Servo calibration
+        ↓
+PWM commands
+        ↓
+Physical leg
+```
+
+This separation is important because higher-level motion code does not need to know that one servo is reversed or that a particular joint's neutral position is `86°` instead of `90°`.
+
+The higher-level controller can work entirely in terms of joint angles and foot positions.
+
+## Current State
+
+The current prototype can:
+
+* independently control the hip, thigh, and knee MG996R servos;
+* account for individual servo neutral positions;
+* compensate for opposite servo mounting directions;
+* calculate thigh and knee angles for a desired planar foot position;
+* reject foot positions outside the physical workspace of the leg.
+
+The next major step will be moving beyond individual static foot positions. I still need to implement smooth interpolation between targets, test controlled foot trajectories, and eventually coordinate all four legs into a gait.
+
+For now, I want to make sure the single-leg kinematics are reliable before introducing the additional complexity of walking.
