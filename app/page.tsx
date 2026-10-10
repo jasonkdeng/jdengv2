@@ -19,6 +19,12 @@ export default function Home() {
       <Section label="Currently">
         <ul className="space-y-1 text-xs">
           <InlineLinkItem
+            prefix="Incoming Systems Engineering Intern @"
+            name="Ford"
+            logoSrc="/ford.png"
+            url="https://www.ford.ca/"
+          />
+          <InlineLinkItem
             prefix="Research @"
             name="Vision and Image Processing Group"
             logoSrc="/viplab.png"
